@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Слайдер</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .slider-container {
+            position: relative;
+            width: 80%;
+            max-width: 500px;
+            margin: auto;
+            overflow: hidden;
+            border: 2px solid #333;
+        }
+        .slides {
+            display: flex;
+            transition: transform 0.5s;
+        }
+        .slide {
+            min-width: 100%;
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .dots {
+            margin-top: 10px;
+        }
+        .dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: gray;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .dot.active {
+            background: black;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slider-container">
+        <div class="slides">
+            <div class="slide" style="background-image: url('https://source.unsplash.com/500x250/?nature');"></div>
+            <div class="slide" style="background-image: url('https://source.unsplash.com/500x250/?forest');"></div>
+            <div class="slide" style="background-image: url('https://source.unsplash.com/500x250/?mountain');"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevSlide()">Назад</button>
+        <button onclick="toggleAutoPlay()">▶</button>
+        <button onclick="nextSlide()">Вперед</button>
+    </div>
+
+    <div class="dots"></div>
+
+    <script>
+        let currentIndex = 0;
+        let slides = document.querySelectorAll('.slide');
+        let slidesContainer = document.querySelector('.slides');
+        let dotsContainer = document.querySelector('.dots');
+        let autoPlay = true;
+        let interval;
+
+        function createDots() {
+            slides.forEach((_, index) => {
+                let dot = document.createElement('span');
+                dot.classList.add('dot');
+                dot.addEventListener('click', () => goToSlide(index));
+                dotsContainer.appendChild(dot);
+            });
+            updateDots();
+        }
+
+        function updateSlide() {
+            slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+            updateDots();
+        }
+
+        function updateDots() {
+            document.querySelectorAll('.dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % slides.length;
+            updateSlide();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            updateSlide();
+        }
+
+        function goToSlide(index) {
+            currentIndex = index;
+            updateSlide();
+        }
+
+        function startAutoPlay() {
+            interval = setInterval(nextSlide, 3000);
+        }
+
+        function stopAutoPlay() {
+            clearInterval(interval);
+        }
+
+        function toggleAutoPlay() {
+            autoPlay = !autoPlay;
+            autoPlay ? startAutoPlay() : stopAutoPlay();
+        }
+
+        createDots();
+        startAutoPlay();
+    </script>
+
+</body>
+</html>
